@@ -32,6 +32,44 @@ const images: ImageItem[] = [
   { id: 10, src: "/images/10.jpg", alt: "New Build 10" },
   { id: 11, src: "/images/11.jpg", alt: "New Build 11" },
   { id: 12, src: "/images/12.jpg", alt: "New Build 12" },
+  { id: 13, src: "/images/13.jpg", alt: "New Build 13" },
+  { id: 14, src: "/images/14.jpg", alt: "New Build 14" },
+  { id: 15, src: "/images/15.jpg", alt: "New Build 15" },
+  { id: 16, src: "/images/16.jpg", alt: "New Build 16" },
+  { id: 17, src: "/images/17.jpg", alt: "New Build 17" },
+  { id: 18, src: "/images/18.jpg", alt: "New Build 18" },
+  { id: 19, src: "/images/19.jpg", alt: "New Build 19" },
+  { id: 20, src: "/images/20.jpg", alt: "New Build 20" },
+  { id: 21, src: "/images/21.jpg", alt: "New Build 21" },
+  { id: 22, src: "/images/22.jpg", alt: "New Build 22" },
+  { id: 23, src: "/images/23.jpg", alt: "New Build 23" },
+  { id: 24, src: "/images/24.jpg", alt: "New Build 24" },
+  { id: 25, src: "/images/25.jpg", alt: "New Build 25" },
+  { id: 26, src: "/images/26.jpg", alt: "New Build 26" },
+  { id: 27, src: "/images/27.jpg", alt: "New Build 27" },
+  { id: 28, src: "/images/28.jpg", alt: "New Build 28" },
+  { id: 29, src: "/images/29.jpg", alt: "New Build 29" },
+  { id: 30, src: "/images/30.jpg", alt: "New Build 30" },
+  { id: 31, src: "/images/31.jpg", alt: "New Build 31" },
+  { id: 32, src: "/images/32.jpg", alt: "New Build 32" },
+  { id: 33, src: "/images/33.jpg", alt: "New Build 33" },
+  { id: 34, src: "/images/34.jpg", alt: "New Build 34" },
+  { id: 35, src: "/images/35.jpg", alt: "New Build 35" },
+  { id: 36, src: "/images/36.jpg", alt: "New Build 36" },
+  { id: 37, src: "/images/37.jpg", alt: "New Build 37" },
+  { id: 38, src: "/images/38.jpg", alt: "New Build 38" },
+  { id: 39, src: "/images/39.jpg", alt: "New Build 39" },
+  { id: 40, src: "/images/40.jpg", alt: "New Build 40" },
+  { id: 41, src: "/images/41.jpg", alt: "New Build 41" },
+  { id: 42, src: "/images/42.jpg", alt: "New Build 42" },
+  { id: 43, src: "/images/43.jpg", alt: "New Build 43" },
+  { id: 44, src: "/images/44.jpg", alt: "New Build 44" },
+  { id: 45, src: "/images/45.jpg", alt: "New Build 45" },
+  { id: 46, src: "/images/46.jpg", alt: "New Build 46" },
+  { id: 47, src: "/images/47.jpg", alt: "New Build 47" },
+  { id: 48, src: "/images/48.jpg", alt: "New Build 48" },
+  { id: 49, src: "/images/49.jpg", alt: "New Build 49" },
+  { id: 50, src: "/images/50.jpg", alt: "New Build 50" },
 ];
 
 export default function NewBuilds2024() {
@@ -99,13 +137,13 @@ export default function NewBuilds2024() {
                   <span className="sr-only">Close</span>
                 </Button>
                 <div className="relative w-full h-full max-h-[85vh]">
-                  <Image
-                    src={selectedImage?.src || ""}
-                    alt={selectedImage?.alt || ""}
-                    layout="fill"
-                    objectFit="contain"
-                    className="p-4"
-                  />
+                  {selectedImage ? (
+                    <img
+                      src={selectedImage.src}
+                      alt={selectedImage.alt}
+                      className="p-4 h-full w-full object-contain"
+                    />
+                  ) : null}
                 </div>
                 <div className="absolute inset-x-0 bottom-0 flex items-center justify-between p-4 bg-background bg-opacity-75">
                   <Button variant="ghost" size="icon" onClick={handlePrevious}>
@@ -137,22 +175,30 @@ export default function NewBuilds2024() {
         ))}
       </div>
       <footer className="mt-8 text-center text-sm text-muted-foreground">
+        <p>Thank you for everything.</p>
+
         <p>
-          Thank you for everything. Photos by{" "}
+          Photos by{" "}
           <Link
-            href="https://example.com/raf"
+            href="https://x.com/lfgraf"
             className="underline hover:text-primary"
           >
             Raf
           </Link>{" "}
           and{" "}
           <Link
-            href="https://example.com/omar"
+            href="https://x.com/chaoticdesigned"
             className="underline hover:text-primary"
           >
             Omar
           </Link>
-          .
+          . Debugged by{" "}
+          <Link
+            href="https://x.com/typicalmitul"
+            className="underline hover:text-primary"
+          >
+            Mitul
+          </Link>{" "}
         </p>
       </footer>
     </div>
