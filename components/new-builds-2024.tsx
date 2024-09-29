@@ -1,8 +1,8 @@
 "use client";
 
+import React, { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import {
@@ -73,55 +73,81 @@ const images: ImageItem[] = [
 ];
 
 export default function NewBuilds2024() {
-  const [selectedImage, setSelectedImage] = useState<ImageItem | null>(null);
+  const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(
+    null
+  );
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const handlePrevious = () => {
-    const currentIndex = images.findIndex(
-      (img) => img.id === selectedImage?.id
+  const handlePrevious = useCallback(() => {
+    setSelectedImageIndex((prevIndex) =>
+      prevIndex === null
+        ? null
+        : (prevIndex - 1 + images.length) % images.length
     );
-    const previousIndex = (currentIndex - 1 + images.length) % images.length;
-    setSelectedImage(images[previousIndex]);
-  };
+  }, []);
 
-  const handleNext = () => {
-    const currentIndex = images.findIndex(
-      (img) => img.id === selectedImage?.id
+  const handleNext = useCallback(() => {
+    setSelectedImageIndex((prevIndex) =>
+      prevIndex === null ? null : (prevIndex + 1) % images.length
     );
-    const nextIndex = (currentIndex + 1) % images.length;
-    setSelectedImage(images[nextIndex]);
-  };
+  }, []);
 
-  const handleDownload = (imageSrc: string, imageName: string) => {
-    fetch(imageSrc)
-      .then((response) => response.blob())
-      .then((blob) => {
-        const url = window.URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = imageName;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        window.URL.revokeObjectURL(url);
-      })
-      .catch((error) => console.error("Error downloading image:", error));
-  };
+  const handleKeyDown = useCallback(
+    (event: KeyboardEvent) => {
+      if (isDialogOpen) {
+        if (event.key === "ArrowLeft") handlePrevious();
+        if (event.key === "ArrowRight") handleNext();
+      }
+    },
+    [isDialogOpen, handlePrevious, handleNext]
+  );
+
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [handleKeyDown]);
+
+  const handleDownload = useCallback((imageSrc: string, imageName: string) => {
+    const link = document.createElement("a");
+    link.href = imageSrc;
+    link.download = imageName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }, []);
+
+  const selectedImage =
+    selectedImageIndex !== null ? images[selectedImageIndex] : null;
+
+  console.log(selectedImage);
 
   return (
     <div className="container mx-auto px-4 py-8 bg-background text-foreground">
       <h1 className="text-3xl font-bold mb-6 text-primary">New Builds 2024</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {images.map((image) => (
-          <Dialog key={image.id}>
+        {images.map((image, index) => (
+          <Dialog
+            key={image.id}
+            open={isDialogOpen && selectedImageIndex === index}
+            onOpenChange={(open) => {
+              setIsDialogOpen(open);
+              if (!open) setSelectedImageIndex(null);
+            }}
+          >
             <DialogTrigger asChild>
-              <div className="cursor-pointer overflow-hidden rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 ease-in-out bg-card">
-                <Image
+              <div
+                className="cursor-pointer overflow-hidden rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 ease-in-out bg-card"
+                onClick={() => {
+                  setSelectedImageIndex(index);
+                  setIsDialogOpen(true);
+                }}
+              >
+                <img
                   src={image.src}
                   alt={image.alt}
                   width={300}
                   height={200}
                   className="w-full h-48 object-cover"
-                  onClick={() => setSelectedImage(image)}
                 />
               </div>
             </DialogTrigger>
@@ -131,19 +157,27 @@ export default function NewBuilds2024() {
                   variant="ghost"
                   size="icon"
                   className="absolute top-2 right-2 z-10"
-                  onClick={() => setSelectedImage(null)}
+                  onClick={() => setIsDialogOpen(false)}
                 >
                   <XIcon className="h-4 w-4" />
                   <span className="sr-only">Close</span>
                 </Button>
                 <div className="relative w-full h-full max-h-[85vh]">
-                  {selectedImage ? (
-                    <img
+                  {selectedImage && (
+                    <Image
                       src={selectedImage.src}
                       alt={selectedImage.alt}
-                      className="p-4 h-full w-full object-contain"
+                      width={1000}
+                      height={1000}
+                      sizes="100vw"
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "contain",
+                      }}
+                      className="p-4"
                     />
-                  ) : null}
+                  )}
                 </div>
                 <div className="absolute inset-x-0 bottom-0 flex items-center justify-between p-4 bg-background bg-opacity-75">
                   <Button variant="ghost" size="icon" onClick={handlePrevious}>
@@ -157,7 +191,7 @@ export default function NewBuilds2024() {
                       selectedImage &&
                       handleDownload(
                         selectedImage.src,
-                        `${selectedImage.alt}.png`
+                        `${selectedImage.alt}.jpg`
                       )
                     }
                   >
@@ -175,8 +209,6 @@ export default function NewBuilds2024() {
         ))}
       </div>
       <footer className="mt-8 text-center text-sm text-muted-foreground">
-        <p>Thank you for everything.</p>
-
         <p>
           Photos by{" "}
           <Link
@@ -198,7 +230,8 @@ export default function NewBuilds2024() {
             className="underline hover:text-primary"
           >
             Mitul
-          </Link>{" "}
+          </Link>
+          {".  "}
         </p>
       </footer>
     </div>
