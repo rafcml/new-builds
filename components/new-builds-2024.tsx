@@ -224,14 +224,7 @@ export default function NewBuilds2024() {
           >
             Omar
           </Link>
-          . Debugged by{" "}
-          <Link
-            href="https://x.com/typicalmitul"
-            className="underline hover:text-primary"
-          >
-            Mitul
-          </Link>
-          {".  "}
+          .{".  "}
         </p>
       </footer>
     </div>
