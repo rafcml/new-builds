@@ -224,7 +224,7 @@ export default function NewBuilds2024() {
           >
             Omar
           </Link>
-          .{".  "}
+          .
         </p>
       </footer>
     </div>
