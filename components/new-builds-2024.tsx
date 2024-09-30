@@ -70,6 +70,9 @@ const images: ImageItem[] = [
   { id: 48, src: "/images/48.jpg", alt: "New Build 48" },
   { id: 49, src: "/images/49.jpg", alt: "New Build 49" },
   { id: 50, src: "/images/50.jpg", alt: "New Build 50" },
+  { id: 51, src: "/images/51.jpg", alt: "New Build 51" },
+  { id: 52, src: "/images/52.jpg", alt: "New Build 52" },
+  { id: 53, src: "/images/53.jpg", alt: "New Build 53" },
 ];
 
 export default function NewBuilds2024() {
