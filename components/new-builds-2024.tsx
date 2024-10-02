@@ -1,16 +1,11 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import Image from "next/image";
-import Link from "next/link";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  XIcon,
-  DownloadIcon,
-} from "lucide-react";
+import { ChevronLeftIcon, ChevronRightIcon, XIcon } from "lucide-react";
+import { useInView } from "react-intersection-observer";
 
 interface ImageItem {
   id: number;
@@ -95,141 +90,78 @@ export default function NewBuilds2024() {
     );
   }, []);
 
-  const handleKeyDown = useCallback(
-    (event: KeyboardEvent) => {
-      if (isDialogOpen) {
-        if (event.key === "ArrowLeft") handlePrevious();
-        if (event.key === "ArrowRight") handleNext();
-      }
-    },
-    [isDialogOpen, handlePrevious, handleNext]
-  );
-
-  useEffect(() => {
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [handleKeyDown]);
-
-  const handleDownload = useCallback((imageSrc: string, imageName: string) => {
-    const link = document.createElement("a");
-    link.href = imageSrc;
-    link.download = imageName;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  }, []);
-
-  const selectedImage =
-    selectedImageIndex !== null ? images[selectedImageIndex] : null;
-
-  console.log(selectedImage);
-
   return (
-    <div className="container mx-auto px-4 py-8 bg-background text-foreground">
-      <h1 className="text-3xl font-bold mb-6 text-primary">New Builds 2024</h1>
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-3xl font-bold mb-6">New Builds 2024</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {images.map((image, index) => (
-          <Dialog
+          <LazyLoadedImage
             key={image.id}
-            open={isDialogOpen && selectedImageIndex === index}
-            onOpenChange={(open) => {
-              setIsDialogOpen(open);
-              if (!open) setSelectedImageIndex(null);
+            image={image}
+            onClick={() => {
+              setSelectedImageIndex(index);
+              setIsDialogOpen(true);
             }}
-          >
-            <DialogTrigger asChild>
-              <div
-                className="cursor-pointer overflow-hidden rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 ease-in-out bg-card"
-                onClick={() => {
-                  setSelectedImageIndex(index);
-                  setIsDialogOpen(true);
-                }}
-              >
-                <img
-                  src={image.src}
-                  alt={image.alt}
-                  width={300}
-                  height={200}
-                  className="w-full h-48 object-cover"
-                />
-              </div>
-            </DialogTrigger>
-            <DialogContent className="max-w-[95vw] w-full max-h-[95vh] p-0 bg-background">
-              <div className="relative w-full h-full flex items-center justify-center">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="absolute top-2 right-2 z-10"
-                  onClick={() => setIsDialogOpen(false)}
-                >
-                  <XIcon className="h-4 w-4" />
-                  <span className="sr-only">Close</span>
-                </Button>
-                <div className="relative w-full h-full max-h-[85vh]">
-                  {selectedImage && (
-                    <Image
-                      src={selectedImage.src}
-                      alt={selectedImage.alt}
-                      width={1000}
-                      height={1000}
-                      sizes="100vw"
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "contain",
-                      }}
-                      className="p-4"
-                    />
-                  )}
-                </div>
-                <div className="absolute inset-x-0 bottom-0 flex items-center justify-between p-4 bg-background bg-opacity-75">
-                  <Button variant="ghost" size="icon" onClick={handlePrevious}>
-                    <ChevronLeftIcon className="h-6 w-6" />
-                    <span className="sr-only">Previous image</span>
-                  </Button>
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    onClick={() =>
-                      selectedImage &&
-                      handleDownload(
-                        selectedImage.src,
-                        `${selectedImage.alt}.jpg`
-                      )
-                    }
-                  >
-                    <DownloadIcon className="h-4 w-4 mr-2" />
-                    Download
-                  </Button>
-                  <Button variant="ghost" size="icon" onClick={handleNext}>
-                    <ChevronRightIcon className="h-6 w-6" />
-                    <span className="sr-only">Next image</span>
-                  </Button>
-                </div>
-              </div>
-            </DialogContent>
-          </Dialog>
+          />
         ))}
       </div>
-      <footer className="mt-8 text-center text-sm text-muted-foreground">
-        <p>
-          Photos by{" "}
-          <Link
-            href="https://x.com/lfgraf"
-            className="underline hover:text-primary"
-          >
-            Raf
-          </Link>{" "}
-          and{" "}
-          <Link
-            href="https://x.com/chaoticdesigned"
-            className="underline hover:text-primary"
-          >
-            Omar
-          </Link>
-          .
-        </p>
-      </footer>
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="max-w-[95vw] w-full max-h-[95vh] p-0">
+          {selectedImageIndex !== null && (
+            <div className="relative w-full h-full">
+              <Button
+                className="absolute top-2 right-2 z-10"
+                onClick={() => setIsDialogOpen(false)}
+              >
+                <XIcon className="h-4 w-4" />
+              </Button>
+              <Image
+                src={images[selectedImageIndex].src}
+                alt={images[selectedImageIndex].alt}
+                layout="fill"
+                objectFit="contain"
+              />
+              <div className="absolute bottom-2 left-2 right-2 flex justify-between">
+                <Button onClick={handlePrevious}>
+                  <ChevronLeftIcon className="h-6 w-6" />
+                </Button>
+                <Button onClick={handleNext}>
+                  <ChevronRightIcon className="h-6 w-6" />
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
+
+function LazyLoadedImage({
+  image,
+  onClick,
+}: {
+  image: ImageItem;
+  onClick: () => void;
+}) {
+  const [ref, inView] = useInView({
+    triggerOnce: true,
+    rootMargin: "200px 0px",
+  });
+
+  return (
+    <div ref={ref} className="cursor-pointer" onClick={onClick}>
+      {inView ? (
+        <Image
+          src={image.src}
+          alt={image.alt}
+          width={300}
+          height={200}
+          objectFit="cover"
+        />
+      ) : (
+        <div className="w-full h-48 bg-gray-200" />
+      )}
     </div>
   );
 }
