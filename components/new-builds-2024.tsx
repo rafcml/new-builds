@@ -84,7 +84,7 @@ export default function NewBuilds2024() {
         </a>{" "}
         and{" "}
         <a
-          href="https://x.com/caothicdesigned"
+          href="https://x.com/chaoticdesigned"
           target="_blank"
           rel="noopener noreferrer"
           className="text-blue-500 hover:underline"
