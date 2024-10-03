@@ -91,6 +91,8 @@ export default function NewBuilds2024() {
         >
           Omar
         </a>
+        {". "}
+        Credits are appreciated.
       </footer>
     </div>
   );
